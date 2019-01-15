@@ -1,13 +1,24 @@
+from threading import Thread
+
 from PythonClient.constants import DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_A_NUMBER, DEFAULT_ALIAS, \
     DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, MESSAGE_ID_NEW_GAME
 from PythonClient.messages.message_factory import MessageFactory
 
 
-class Client:
+class Client(Thread):
     def __init__(self):
-        self.COMMAND_MAP = {'user': self.updateUser,
-                            'server': self.updateServer,
-                            'new game': self.newGame}
+        super().__init__()
+
+        self.alive = True
+
+        self.COMMAND_MAP = {
+            'help': self.help,
+            'exit': self.exit,
+            'info': self.info,
+            'user': self.updateUser,
+            'server': self.updateServer,
+            'new game': self.newGame
+        }
 
         self.user = {
             'first_name': DEFAULT_FIRST_NAME,
@@ -21,11 +32,39 @@ class Client:
             'port': DEFAULT_SERVER_PORT
         }
 
+        self.help()
+
+    def run(self):
+        while self.alive:
+            data = input("Enter Command: ").lower()
+            try:
+                self.COMMAND_MAP[data]()
+            except KeyError:
+                print("Error: Invalid Command")
+
     def help(self):
         """Display a help menu for the client"""
         print("-----COMMANDS-----")
+        print("help - display this help menu")
+        print("exit - end the program")
+        print("info - display info about the program")
         print("user - input new information about the user, such as first/last name, A#, or alias")
         print("server - input new information about the server, such as host and port")
+
+    def exit(self):
+        self.alive = False
+
+    def info(self):
+        print("-"*30)
+        print("User Information")
+        print("First Name  : {}".format(self.user['first_name']))
+        print("Last Name   : {}".format(self.user['last_name']))
+        print("A Number    : {}".format(self.user['a_number']))
+        print("Alias       : {}".format(self.user['alias']))
+        print("Server Information")
+        print("Host        : {}".format(self.server['host']))
+        print("Port        : {}".format(self.server['port']))
+        print("-"*30)
 
     def updateUser(self):
         """Update user information such as first/last name, A#, or alias"""
