@@ -2,7 +2,7 @@ import time
 from queue import Empty
 from threading import Thread
 
-from PythonClient.constants import TASK_SLEEP_TIME
+from PythonClient.constants import SLEEP_TIME
 
 
 class Worker(Thread):
@@ -16,7 +16,7 @@ class Worker(Thread):
                 task = self.client.work_queue.get()
                 self.completeTask(task)
             except Empty:
-                time.sleep(TASK_SLEEP_TIME)
+                time.sleep(SLEEP_TIME)
 
     def completeTask(self, task):
         pass # TODO

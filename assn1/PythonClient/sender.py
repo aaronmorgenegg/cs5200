@@ -1,16 +1,30 @@
 import socket
+import time
+from queue import Queue, Empty
 from threading import Thread
 
-from PythonClient.constants import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT
+from PythonClient.constants import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, SLEEP_TIME
 
 
 class Sender(Thread):
     def __init__(self, group=None, target=None, name=None, *args, **kwargs):
         super().__init__(group, target, name, args, kwargs)
+        self.client = kwargs['client']
+        self.socket = None
+        self.message_queue = Queue()
 
     def run(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
-            s.connect((DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT))
-            s.sendall(b'Hello, world')
-            data = s.recv(1024)
-            print('Received', repr(data))
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket.connect((self.client.server['host'], self.client.server['port']))
+        while self.client.alive:
+            try:
+                message = self.message_queue.get()
+                self._sendMessage(message)
+            except Empty:
+                time.sleep(SLEEP_TIME)
+
+    def enqueueMessage(self, message):
+        self.message_queue.put(message)
+
+    def _sendMessage(self, message):
+        self.socket.send(message.encode())

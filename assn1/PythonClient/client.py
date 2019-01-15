@@ -47,7 +47,7 @@ class Client(Thread):
 
         self.work_queue = Queue()
 
-        self.sender = Sender()
+        self.sender = Sender(client=self)
         self.receiver = Receiver()
         self.worker = Worker(client=self)
         self.sender.start()
@@ -138,4 +138,4 @@ class Client(Thread):
 
     def sendMessage(self, message):
         """Send a message to the server"""
-        pass # TODO
+        self.sender.sendMessage(message)

@@ -19,5 +19,4 @@ MESSAGE_ID_ACK       = 8
 MESSAGE_ID_ERROR     = 9
 MESSAGE_ID_HEARTBEAT = 10
 
-# Workers
-TASK_SLEEP_TIME = .05 # in seconds, sleep time after checking for tasks on an empty queue
+SLEEP_TIME = .05 # in seconds, sleep time after checking empty queues for workers/senders/receivers
