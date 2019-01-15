@@ -1,7 +1,7 @@
 
 class Message:
     def __init__(self, *args):
-        pass
+        self.id = args[0]
 
     def encode(self):
         pass

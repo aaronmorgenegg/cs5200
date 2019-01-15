@@ -1,7 +1,8 @@
 from threading import Thread
 
 from PythonClient.constants import DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_A_NUMBER, DEFAULT_ALIAS, \
-    DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, MESSAGE_ID_NEW_GAME
+    DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, MESSAGE_ID_NEW_GAME, MESSAGE_ID_GUESS, MESSAGE_ID_GET_HINT, \
+    MESSAGE_ID_EXIT, MESSAGE_ID_ACK
 from PythonClient.messages.message_factory import MessageFactory
 
 
@@ -17,7 +18,9 @@ class Client(Thread):
             'info': self.info,
             'user': self.updateUser,
             'server': self.updateServer,
-            'new game': self.newGame
+            'new game': self.newGame,
+            'guess': self.guess,
+            'get hint': self.getHint
         }
 
         self.user = {
@@ -30,6 +33,12 @@ class Client(Thread):
         self.server = {
             'host': DEFAULT_SERVER_HOST,
             'port': DEFAULT_SERVER_PORT
+        }
+
+        self.game = {
+            'id': None,
+            'definition': None,
+            'guess': None
         }
 
         self.help()
@@ -50,9 +59,9 @@ class Client(Thread):
         print("info - display info about the program")
         print("user - input new information about the user, such as first/last name, A#, or alias")
         print("server - input new information about the server, such as host and port")
-
-    def exit(self):
-        self.alive = False
+        print("new game - initiate a new game with the server")
+        print("guess - submit a word as a guess to the server")
+        print("get hint - get a hint about a letter")
 
     def info(self):
         print("-"*30)
@@ -64,6 +73,10 @@ class Client(Thread):
         print("Server Information")
         print("Host        : {}".format(self.server['host']))
         print("Port        : {}".format(self.server['port']))
+        print("Game Information")
+        print("ID          : {}".format(self.game['id']))
+        print("Guess       : {}".format(self.game['guess']))
+        print("Definition  : {}".format(self.game['definition']))
         print("-"*30)
 
     def updateUser(self):
@@ -79,9 +92,29 @@ class Client(Thread):
         self.server['port'] = input("Enter server port: ")
 
     def newGame(self):
-        """Start a new game"""
         message = MessageFactory.build(MESSAGE_ID_NEW_GAME, self.user['a_number'], self.user['last_name'],
                                        self.user['first_name'], self.user['alias'])
+        self.sendMessage(message)
+
+    def guess(self):
+        if self.game['id'] is None: return
+        message = MessageFactory.build(MESSAGE_ID_GUESS, self.game['id'], self.game['guess'])
+        self.sendMessage(message)
+
+    def getHint(self):
+        if self.game['id'] is None: return
+        message = MessageFactory.build(MESSAGE_ID_GET_HINT, self.game['id'])
+        self.sendMessage(message)
+
+    def exit(self):
+        if self.game['id'] is None: return
+        message = MessageFactory.build(MESSAGE_ID_EXIT, self.game['id'])
+        self.sendMessage(message)
+
+    def ack(self):
+        if self.game['id'] is None: return
+        message = MessageFactory.build(MESSAGE_ID_ACK, self.game['id'])
+        self.sendMessage(message)
 
     def sendMessage(self, message):
         """Send a message to the server"""
