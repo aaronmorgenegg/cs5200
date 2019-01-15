@@ -92,28 +92,29 @@ class Client(Thread):
         self.server['port'] = input("Enter server port: ")
 
     def newGame(self):
-        message = MessageFactory.build(MESSAGE_ID_NEW_GAME, self.user['a_number'], self.user['last_name'],
-                                       self.user['first_name'], self.user['alias'])
+        message = MessageFactory.build(MESSAGE_ID_NEW_GAME, user_a_number=self.user['a_number'],
+                                       user_last_name=self.user['last_name'], user_first_name=self.user['first_name'],
+                                       user_alias=self.user['alias'])
         self.sendMessage(message)
 
     def guess(self):
         if self.game['id'] is None: return
-        message = MessageFactory.build(MESSAGE_ID_GUESS, self.game['id'], self.game['guess'])
+        message = MessageFactory.build(MESSAGE_ID_GUESS, user_id=self.game['id'], game_guess=self.game['guess'])
         self.sendMessage(message)
 
     def getHint(self):
         if self.game['id'] is None: return
-        message = MessageFactory.build(MESSAGE_ID_GET_HINT, self.game['id'])
+        message = MessageFactory.build(MESSAGE_ID_GET_HINT, game_id=self.game['id'])
         self.sendMessage(message)
 
     def exit(self):
         if self.game['id'] is None: return
-        message = MessageFactory.build(MESSAGE_ID_EXIT, self.game['id'])
+        message = MessageFactory.build(MESSAGE_ID_EXIT, game_id=self.game['id'])
         self.sendMessage(message)
 
     def ack(self):
         if self.game['id'] is None: return
-        message = MessageFactory.build(MESSAGE_ID_ACK, self.game['id'])
+        message = MessageFactory.build(MESSAGE_ID_ACK, game_id=self.game['id'])
         self.sendMessage(message)
 
     def sendMessage(self, message):

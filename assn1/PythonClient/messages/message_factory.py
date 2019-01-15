@@ -25,6 +25,6 @@ class MessageFactory:
     }
 
     @staticmethod
-    def build(message_type, *args):
-        message = MessageFactory.MESSAGE_TYPES[message_type](args)
+    def build(message_type, *args, **kwargs):
+        message = MessageFactory.MESSAGE_TYPES[message_type](args, kwargs)
         return message
