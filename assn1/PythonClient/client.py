@@ -1,14 +1,18 @@
+from queue import Queue
 from threading import Thread
 
 from PythonClient.constants import DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_A_NUMBER, DEFAULT_ALIAS, \
     DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, MESSAGE_ID_NEW_GAME, MESSAGE_ID_GUESS, MESSAGE_ID_GET_HINT, \
     MESSAGE_ID_EXIT, MESSAGE_ID_ACK
 from PythonClient.messages.message_factory import MessageFactory
+from PythonClient.receiver import Receiver
+from PythonClient.sender import Sender
+from PythonClient.worker import Worker
 
 
 class Client(Thread):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, group=None, target=None, name=None, *args, **kwargs):
+        super().__init__(group, target, name, args, kwargs)
 
         self.alive = True
 
@@ -40,6 +44,15 @@ class Client(Thread):
             'definition': None,
             'guess': None
         }
+
+        self.work_queue = Queue()
+
+        self.sender = Sender()
+        self.receiver = Receiver()
+        self.worker = Worker(client=self)
+        self.sender.start()
+        self.receiver.start()
+        self.worker.start()
 
         self.help()
 
@@ -81,6 +94,9 @@ class Client(Thread):
 
     def updateUser(self):
         """Update user information such as first/last name, A#, or alias"""
+        if self.game['id'] is None:
+            print("Error: Cannot modify user information while game is in progress")
+            return
         self.user['first_name'] = input("Enter First Name: ")
         self.user['last_name'] = input("Enter Last Name: ")
         self.user['a_number'] = input("Enter A Number: ")
@@ -88,6 +104,9 @@ class Client(Thread):
 
     def updateServer(self):
         """Update server information such as host and port"""
+        if self.game['id'] is None:
+            print("Error: Cannot modify server information while game is in progress")
+            return
         self.server['host'] = input("Enter server host: ")
         self.server['port'] = input("Enter server port: ")
 
