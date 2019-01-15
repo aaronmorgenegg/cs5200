@@ -3,7 +3,7 @@ import time
 from queue import Queue, Empty
 from threading import Thread
 
-from PythonClient.constants import DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, SLEEP_TIME
+from PythonClient.constants import SLEEP_TIME
 
 
 class Sender(Thread):

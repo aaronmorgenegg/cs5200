@@ -94,7 +94,7 @@ class Client(Thread):
 
     def updateUser(self):
         """Update user information such as first/last name, A#, or alias"""
-        if self.game['id'] is None:
+        if self.game['id'] is not None:
             print("Error: Cannot modify user information while game is in progress")
             return
         self.user['first_name'] = input("Enter First Name: ")
@@ -104,7 +104,7 @@ class Client(Thread):
 
     def updateServer(self):
         """Update server information such as host and port"""
-        if self.game['id'] is None:
+        if self.game['id'] is not None:
             print("Error: Cannot modify server information while game is in progress")
             return
         self.server['host'] = input("Enter server host: ")
@@ -131,11 +131,9 @@ class Client(Thread):
         message = MessageFactory.build(MESSAGE_ID_EXIT, game_id=self.game['id'])
         self.sendMessage(message)
 
-    def ack(self):
-        if self.game['id'] is None: return
-        message = MessageFactory.build(MESSAGE_ID_ACK, game_id=self.game['id'])
-        self.sendMessage(message)
-
     def sendMessage(self, message):
         """Send a message to the server"""
-        self.sender.sendMessage(message)
+        self.sender.enqueueMessage(message)
+
+    def enqueueTask(self, task):
+        self.work_queue.put(task)

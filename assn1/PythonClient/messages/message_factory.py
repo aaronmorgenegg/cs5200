@@ -25,6 +25,11 @@ class MessageFactory:
     }
 
     @staticmethod
-    def build(message_type, *args, **kwargs):
-        message = MessageFactory.MESSAGE_TYPES[message_type](args, kwargs)
+    def build(*args, **kwargs):
+        message = MessageFactory.MESSAGE_TYPES[args[0]](args, kwargs)
         return message
+
+    @staticmethod
+    def buildFromBytes(bytestring):
+        """Build a message from a byte string"""
+
