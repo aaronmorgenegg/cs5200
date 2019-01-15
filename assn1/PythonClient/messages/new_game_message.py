@@ -1,4 +1,4 @@
-from PythonClient.messages.message import Message, encodeString
+from PythonClient.messages.message import Message
 
 
 class NewGameMessage(Message):
@@ -10,12 +10,7 @@ class NewGameMessage(Message):
         self.alias = args[4]
 
     def encode(self):
-        data = self.id.to_bytes(2, byteorder="big")
-        data += encodeString(self.last_name)
-        data += encodeString(self.first_name)
-        data += encodeString(self.alias)
-
-        return data
+        return self._encodeArgs(self.id, self.last_name, self.first_name, self.alias)
 
     def decode(self):
         pass
