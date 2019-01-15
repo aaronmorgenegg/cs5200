@@ -1,6 +1,4 @@
 
-VERBOSITY = 3
-
 DEFAULT_SERVER_HOST = '127.0.0.1'  # The server's hostname or IP address
 DEFAULT_SERVER_PORT = 12001        # The port used by the server
 
