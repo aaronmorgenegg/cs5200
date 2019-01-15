@@ -1,5 +1,6 @@
 from PythonClient.constants import DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_A_NUMBER, DEFAULT_ALIAS, \
-    DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT
+    DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, MESSAGE_ID_NEW_GAME
+from PythonClient.messages.message_factory import MessageFactory
 
 
 class Client:
@@ -40,4 +41,9 @@ class Client:
 
     def newGame(self):
         """Start a new game"""
-        pass
+        message = MessageFactory.build(MESSAGE_ID_NEW_GAME, self.user['a_number'], self.user['last_name'],
+                                       self.user['first_name'], self.user['alias'])
+
+    def sendMessage(self, message):
+        """Send a message to the server"""
+        pass # TODO

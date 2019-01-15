@@ -1,6 +1,6 @@
 
 class Message:
-    def __init__(self):
+    def __init__(self, *args):
         pass
 
     def encode(self):
