@@ -108,7 +108,9 @@ class Client(Thread):
             print("Error: Cannot modify server information while game is in progress")
             return
         self.server['host'] = input("Enter server host: ")
-        self.server['port'] = input("Enter server port: ")
+        self.server['port'] = int(input("Enter server port: "))
+        self.receiver.reconnectSocket()
+        self.sender.reconnectSocket()
 
     def newGame(self):
         message = MessageFactory.build(MESSAGE_ID_NEW_GAME, user_a_number=self.user['a_number'],

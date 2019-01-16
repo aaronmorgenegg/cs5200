@@ -3,7 +3,7 @@ from PythonClient.messages.message import Message
 
 class AckMessage(Message):
     def __init__(self, *args, **kwargs):
-        super().__init__(args, kwargs)
+        super().__init__(*args, **kwargs)
         self.game_id = kwargs['game_id']
 
     def encode(self):

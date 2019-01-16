@@ -21,7 +21,7 @@ class Worker(Thread):
     def run(self):
         while self.client.alive:
             try:
-                task = self.client.work_queue.get()
+                task = self.client.work_queue.get(block=False)
                 self._completeTask(task)
             except Empty:
                 time.sleep(SLEEP_TIME)

@@ -3,7 +3,7 @@ from PythonClient.messages.message import Message
 
 class NewGameMessage(Message):
     def __init__(self, *args, **kwargs):
-        super().__init__(args, kwargs)
+        super().__init__(*args, **kwargs)
         self.a_number = kwargs['user_a_number']
         self.last_name = kwargs['user_last_name']
         self.first_name = kwargs['user_first_name']

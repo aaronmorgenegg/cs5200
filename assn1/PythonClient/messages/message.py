@@ -25,7 +25,7 @@ class Message:
         """Takes a python string and returns the proper encoding:
         2 bytes(length #), 2 bytes(char 1), 2 bytes(char 2)... 2 bytes(char n)
         """
-        length = len(string)
+        length = len(string)*2
         data = length.to_bytes(2, byteorder="big")
         for char in string:
             ord_char = ord(char)
