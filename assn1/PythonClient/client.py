@@ -48,7 +48,7 @@ class Client(Thread):
         self.work_queue = Queue()
 
         self.sender = Sender(client=self)
-        self.receiver = Receiver()
+        self.receiver = Receiver(client=self)
         self.worker = Worker(client=self)
         self.sender.start()
         self.receiver.start()

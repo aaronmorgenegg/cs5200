@@ -8,9 +8,6 @@ class Message:
     def encode(self):
         pass
 
-    def decode(self):
-        pass
-
     def _encodeArgs(self, *args):
         data = b''
         for arg in args:

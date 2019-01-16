@@ -11,6 +11,3 @@ class NewGameMessage(Message):
 
     def encode(self):
         return self._encodeArgs(self.id, self.a_number, self.last_name, self.first_name, self.alias)
-
-    def decode(self):
-        pass

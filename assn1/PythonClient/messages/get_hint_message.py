@@ -8,6 +8,3 @@ class GetHintMessage(Message):
 
     def encode(self):
         return self._encodeArgs(self.id, self.game_id)
-
-    def decode(self):
-        pass

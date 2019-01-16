@@ -27,4 +27,5 @@ class Sender(Thread):
         self.message_queue.put(message)
 
     def _sendMessage(self, message):
+        print("sending {}".format(message.encode()))
         self.socket.send(message.encode())
