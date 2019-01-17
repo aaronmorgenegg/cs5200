@@ -8,6 +8,7 @@ from PythonClient.messages.game_def_message import GameDefMessage
 from PythonClient.messages.get_hint_message import GetHintMessage
 from PythonClient.messages.guess_message import GuessMessage
 from PythonClient.messages.heartbeat_message import HeartbeatMessage
+from PythonClient.messages.hint_message import HintMessage
 from PythonClient.messages.new_game_message import NewGameMessage
 
 
@@ -18,6 +19,7 @@ class MessageFactory:
         MESSAGE_ID_GUESS: GuessMessage,
         MESSAGE_ID_ANSWER: AnswerMessage,
         MESSAGE_ID_GET_HINT: GetHintMessage,
+        MESSAGE_ID_HINT: HintMessage,
         MESSAGE_ID_EXIT: ExitMessage,
         MESSAGE_ID_ACK: AckMessage,
         MESSAGE_ID_ERROR: ErrorMessage,
@@ -30,6 +32,7 @@ class MessageFactory:
         MESSAGE_ID_GUESS: ["int", "string"],
         MESSAGE_ID_ANSWER: ["int", "bool", "int", "string"],
         MESSAGE_ID_GET_HINT: ["int"],
+        MESSAGE_ID_HINT: ["int", "string"],
         MESSAGE_ID_EXIT: ["int"],
         MESSAGE_ID_ACK: ["int"],
         MESSAGE_ID_ERROR: ["int", "string"],
@@ -63,7 +66,8 @@ class MessageFactory:
             return MessageFactory.build(args[0], game_id=args[1], game_guess=args[2])
         elif args[0] == MESSAGE_ID_HINT:
             return MessageFactory.build(args[0], game_id=args[1], game_hint=args[2])
-        print("Error: No message handling")
+        else:
+            print("Error: No message handling")
 
     @staticmethod
     def _decodeBytes(bytestring):

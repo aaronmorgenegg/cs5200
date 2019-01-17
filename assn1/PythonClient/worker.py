@@ -34,9 +34,9 @@ class Worker(Thread):
     def _completeAnswerTask(self, task):
         if task.game_result == 1:
             print("Correct. Score: {}".format(task.game_score))
-            self.client.game['guess'] = task.game_hint
         elif task.game_result == 0:
             print("Incorrect.")
+        self.client.game['guess'] = task.game_hint
 
     def _completeErrorTask(self, task):
         print(task.error_text)
@@ -50,5 +50,4 @@ class Worker(Thread):
         self.client.alive = False
 
     def _completeHintTask(self, task):
-        print("task.game_hint")
         self.client.game['guess'] = task.game_hint
