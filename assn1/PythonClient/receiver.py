@@ -25,6 +25,9 @@ class Receiver(Thread):
             except socket.error:
                 time.sleep(SLEEP_TIME)
 
+    def setSocket(self, socket):
+        self.socket = socket
+
     def _decodeBuffer(self, buf):
         try:
             message = MessageFactory.buildFromBytes(buf)

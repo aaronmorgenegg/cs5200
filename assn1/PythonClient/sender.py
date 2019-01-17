@@ -21,6 +21,9 @@ class Sender(Thread):
             except Empty:
                 time.sleep(SLEEP_TIME)
 
+    def setSocket(self, socket):
+        self.socket = socket
+
     def enqueueMessage(self, message):
         logging.debug("Sender enqueueing message with id: {}".format(message.id))
         self.message_queue.put(message)

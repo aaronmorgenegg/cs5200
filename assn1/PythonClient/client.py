@@ -51,6 +51,8 @@ class Client(Thread):
         self.work_queue = Queue()
 
         self.socket = None
+        self.sender = None
+        self.receiver = None
         self.reconnectSocket()
         self.sender = Sender(client=self, socket=self.socket)
         self.receiver = Receiver(client=self, socket=self.socket)
@@ -170,3 +172,5 @@ class Client(Thread):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.connect((self.server['host'], self.server['port']))
         self.socket.settimeout(2)
+        if self.sender: self.sender.setSocket(self.socket)
+        if self.receiver: self.receiver.setSocket(self.socket)
