@@ -24,6 +24,18 @@ class MessageFactory:
         MESSAGE_ID_HEARTBEAT: HeartbeatMessage
     }
 
+    ARG_ORDER = {
+        MESSAGE_ID_NEW_GAME: ["string", "string", "string", "string"],
+        MESSAGE_ID_GAME_DEF: ["int", "string", "string"],
+        MESSAGE_ID_GUESS: ["int", "string"],
+        MESSAGE_ID_ANSWER: ["int", "bool", "int", "string"],
+        MESSAGE_ID_GET_HINT: ["int"],
+        MESSAGE_ID_EXIT: ["int"],
+        MESSAGE_ID_ACK: ["int"],
+        MESSAGE_ID_ERROR: ["int", "string"],
+        MESSAGE_ID_HEARTBEAT: ["int"]
+    }
+
     @staticmethod
     def build(*args, **kwargs):
         message = MessageFactory.MESSAGE_TYPES[args[0]](*args, **kwargs)
@@ -32,4 +44,43 @@ class MessageFactory:
     @staticmethod
     def buildFromBytes(bytestring):
         """Build a message from a byte string"""
-        pass # TODO
+        args = MessageFactory._decodeBytes(bytestring)
+        if args[0] == MESSAGE_ID_HEARTBEAT:
+            return MessageFactory.build(args[0], game_id=args[1])
+        elif args[0] == MESSAGE_ID_GAME_DEF:
+            return MessageFactory.build(args[0], game_id=args[1], game_hint=args[2], game_definition=args[3])
+        print("Error: No message handling")
+
+    @staticmethod
+    def _decodeBytes(bytestring):
+        byte_list = list(bytestring)
+        message_id = MessageFactory._decodeInt(byte_list)
+        arg_order = MessageFactory.ARG_ORDER[message_id]
+        args = [message_id]
+        for arg in arg_order:
+            if arg == "bool": args.append(MessageFactory._decodeBool(byte_list))
+            elif arg == "int": args.append(MessageFactory._decodeInt(byte_list))
+            elif arg == "string": args.append(MessageFactory._decodeString(byte_list))
+        return args
+
+    @staticmethod
+    def _decodeBool(byte_list):
+        bytestring = "{}".format(byte_list.pop(0))
+        return bool(bytestring)
+
+    @staticmethod
+    def _decodeInt(byte_list):
+        bytestring = "{}{}".format(byte_list.pop(0), byte_list.pop(0))
+        return int(bytestring)
+
+    @staticmethod
+    def _decodeChar(byte_list):
+        return chr(MessageFactory._decodeInt(byte_list))
+
+    @staticmethod
+    def _decodeString(byte_list):
+        length = MessageFactory._decodeInt(byte_list)//2
+        string = ""
+        for i in range(length):
+            string += MessageFactory._decodeChar(byte_list)
+        return string

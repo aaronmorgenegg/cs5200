@@ -1,3 +1,4 @@
+import socket
 from queue import Queue
 from threading import Thread
 
@@ -47,8 +48,10 @@ class Client(Thread):
 
         self.work_queue = Queue()
 
-        self.sender = Sender(client=self)
-        self.receiver = Receiver(client=self)
+        self.socket = None
+        self.reconnectSocket()
+        self.sender = Sender(client=self, socket=self.socket)
+        self.receiver = Receiver(client=self, socket=self.socket)
         self.worker = Worker(client=self)
         self.sender.start()
         self.receiver.start()
@@ -109,8 +112,7 @@ class Client(Thread):
             return
         self.server['host'] = input("Enter server host: ")
         self.server['port'] = int(input("Enter server port: "))
-        self.receiver.reconnectSocket()
-        self.sender.reconnectSocket()
+        self.reconnectSocket()
 
     def newGame(self):
         message = MessageFactory.build(MESSAGE_ID_NEW_GAME, user_a_number=self.user['a_number'],
@@ -138,4 +140,10 @@ class Client(Thread):
         self.sender.enqueueMessage(message)
 
     def enqueueTask(self, task):
+        print("Enqueueueueueing task {}".format(task))
         self.work_queue.put(task)
+
+    def reconnectSocket(self):
+        if self.socket is not None: self.socket.close()
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.socket.connect((self.server['host'], self.server['port']))
