@@ -66,6 +66,7 @@ class Client(Thread):
                 self.COMMAND_MAP[data]()
             except KeyError:
                 print("Error: Invalid Command")
+                self.help()
 
     def help(self):
         """Display a help menu for the client"""
@@ -140,10 +141,10 @@ class Client(Thread):
         self.sender.enqueueMessage(message)
 
     def enqueueTask(self, task):
-        print("Enqueueueueueing task {}".format(task))
         self.work_queue.put(task)
 
     def reconnectSocket(self):
         if self.socket is not None: self.socket.close()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.connect((self.server['host'], self.server['port']))
+        self.socket.settimeout(2)

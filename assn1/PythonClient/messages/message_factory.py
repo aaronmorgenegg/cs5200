@@ -49,6 +49,18 @@ class MessageFactory:
             return MessageFactory.build(args[0], game_id=args[1])
         elif args[0] == MESSAGE_ID_GAME_DEF:
             return MessageFactory.build(args[0], game_id=args[1], game_hint=args[2], game_definition=args[3])
+        elif args[0] == MESSAGE_ID_ERROR:
+            return MessageFactory.build(args[0], game_id=args[1], error_text=args[2])
+        elif args[0] == MESSAGE_ID_ANSWER:
+            return MessageFactory.build(args[0], game_id=args[1], game_result=args[2], game_hint=args[3], game_score=args[4])
+        elif args[0] == MESSAGE_ID_GET_HINT:
+            return MessageFactory.build(args[0], game_id=args[1])
+        elif args[0] == MESSAGE_ID_ACK:
+            return MessageFactory.build(args[0], game_id=args[1])
+        elif args[0] == MESSAGE_ID_EXIT:
+            return MessageFactory.build(args[0], game_id=args[1])
+        elif args[0] == MESSAGE_ID_GUESS:
+            return MessageFactory.build(args[0], game_id=args[1], game_guess=args[2])
         print("Error: No message handling")
 
     @staticmethod

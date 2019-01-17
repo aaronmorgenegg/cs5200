@@ -1,6 +1,8 @@
+import socket
+import time
 from threading import Thread
 
-from PythonClient.constants import MESSAGE_ID_HEARTBEAT, MESSAGE_ID_ACK
+from PythonClient.constants import MESSAGE_ID_HEARTBEAT, MESSAGE_ID_ACK, SLEEP_TIME
 from PythonClient.messages.message_factory import MessageFactory
 
 
@@ -12,16 +14,18 @@ class Receiver(Thread):
 
     def run(self):
         while self.client.alive:
-            buf = self.socket.recv(1024)
-            if len(buf) > 0:
-                response = self._decodeBuffer(buf)
-                if response is not None:
-                    self.client.enqueueTask(response)
+            try:
+                buf = self.socket.recv(1024)
+                if len(buf) > 0:
+                    response = self._decodeBuffer(buf)
+                    if response is not None:
+                        self.client.enqueueTask(response)
+            except socket.error:
+                time.sleep(SLEEP_TIME)
 
     def _decodeBuffer(self, buf):
         try:
             message = MessageFactory.buildFromBytes(buf)
-            print("Built Message {}".format(message))
             if message.id == MESSAGE_ID_HEARTBEAT:
                 self._ackHeartbeat()
                 message = None
