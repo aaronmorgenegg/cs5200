@@ -31,7 +31,10 @@ class Worker(Thread):
                 time.sleep(SLEEP_TIME)
 
     def _completeTask(self, task):
-        self.TASK_MAP[task.id](task)
+        try:
+            self.TASK_MAP[task.id](task)
+        except KeyError:
+            logging.error("Worker TaskMap KeyError during processing of task with id: {}".format(task.id))
 
     def _completeAnswerTask(self, task):
         if task.game_result is True:

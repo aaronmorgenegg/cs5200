@@ -15,9 +15,19 @@ from PythonClient.worker import Worker
 class Client(Thread):
     def __init__(self, group=None, target=None, name=None, *args, **kwargs):
         super().__init__(group, target, name, args, kwargs)
+
         self._initLogging()
         logging.debug("Client Initializing")
 
+        self._initData()
+
+        self._initThreads()
+
+        self.help()
+        logging.debug("Client done initializing")
+
+    def _initData(self):
+        """Initialize client, user, server, and game data"""
         self.alive = True
 
         self.COMMAND_MAP = {
@@ -48,6 +58,8 @@ class Client(Thread):
             'guess': None
         }
 
+    def _initThreads(self):
+        """Initialize Worker, Sender, and Receiver threads"""
         self.work_queue = Queue()
 
         self.socket = None
@@ -60,10 +72,6 @@ class Client(Thread):
         self.sender.start()
         self.receiver.start()
         self.worker.start()
-
-        self.help()
-
-        logging.debug("Client done initializing")
 
     def _initLogging(self):
         logging.basicConfig(format="%(levelname)s:%(asctime)s - %(message)s", filename=LOG_FILE, level=LOG_LEVEL)
@@ -82,6 +90,7 @@ class Client(Thread):
                         print("Error: Invalid Command")
                         logging.info("Client invalid command {}".format(data))
                         self.help()
+        logging.info("Client finished exiting")
 
     def help(self):
         """Display a help menu for the client"""
