@@ -34,9 +34,9 @@ class Worker(Thread):
         self.TASK_MAP[task.id](task)
 
     def _completeAnswerTask(self, task):
-        if task.game_result == 1:
+        if task.game_result is True:
             print("Correct. Score: {}".format(task.game_score))
-        elif task.game_result == 0:
+        elif task.game_result is False:
             print("Incorrect.")
         self.client.game['guess'] = task.game_hint
 

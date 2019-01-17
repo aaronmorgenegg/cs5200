@@ -89,7 +89,7 @@ class MessageFactory:
     @staticmethod
     def _decodeBool(byte_list):
         bytestring = "{}".format(byte_list.pop(0))
-        return bool(bytestring)
+        return bool(int(bytestring))
 
     @staticmethod
     def _decodeInt(byte_list):
