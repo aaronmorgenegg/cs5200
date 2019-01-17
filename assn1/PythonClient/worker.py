@@ -2,7 +2,8 @@ import time
 from queue import Empty
 from threading import Thread
 
-from PythonClient.constants import SLEEP_TIME, MESSAGE_ID_ANSWER, MESSAGE_ID_ERROR, MESSAGE_ID_GAME_DEF, MESSAGE_ID_ACK
+from PythonClient.constants import SLEEP_TIME, MESSAGE_ID_ANSWER, MESSAGE_ID_ERROR, MESSAGE_ID_GAME_DEF, MESSAGE_ID_ACK, \
+    MESSAGE_ID_HINT
 
 
 class Worker(Thread):
@@ -15,7 +16,8 @@ class Worker(Thread):
             MESSAGE_ID_ANSWER: self._completeAnswerTask,
             MESSAGE_ID_ERROR: self._completeErrorTask,
             MESSAGE_ID_GAME_DEF: self._completeGameDefTask,
-            MESSAGE_ID_ACK: self._completeAckTask
+            MESSAGE_ID_ACK: self._completeAckTask,
+            MESSAGE_ID_HINT: self._completeHintTask
         }
 
     def run(self):
@@ -30,11 +32,11 @@ class Worker(Thread):
         self.TASK_MAP[task.id](task)
 
     def _completeAnswerTask(self, task):
-        if task.result == 1:
-            print("Correct. Score: {}".format(task.score))
-        elif task.result == 0:
+        if task.game_result == 1:
+            print("Correct. Score: {}".format(task.game_score))
+            self.client.game['guess'] = task.game_hint
+        elif task.game_result == 0:
             print("Incorrect.")
-        self.client.game['guess'] = task.hint
 
     def _completeErrorTask(self, task):
         print(task.error_text)
@@ -46,3 +48,7 @@ class Worker(Thread):
 
     def _completeAckTask(self, task):
         self.client.alive = False
+
+    def _completeHintTask(self, task):
+        print("task.game_hint")
+        self.client.game['guess'] = task.game_hint

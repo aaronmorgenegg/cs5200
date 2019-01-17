@@ -1,5 +1,5 @@
 from PythonClient.constants import MESSAGE_ID_NEW_GAME, MESSAGE_ID_GAME_DEF, MESSAGE_ID_GUESS, MESSAGE_ID_ANSWER, \
-    MESSAGE_ID_GET_HINT, MESSAGE_ID_EXIT, MESSAGE_ID_ACK, MESSAGE_ID_ERROR, MESSAGE_ID_HEARTBEAT
+    MESSAGE_ID_GET_HINT, MESSAGE_ID_EXIT, MESSAGE_ID_ACK, MESSAGE_ID_ERROR, MESSAGE_ID_HEARTBEAT, MESSAGE_ID_HINT
 from PythonClient.messages.ack_message import AckMessage
 from PythonClient.messages.answer_message import AnswerMessage
 from PythonClient.messages.error_message import ErrorMessage
@@ -52,7 +52,7 @@ class MessageFactory:
         elif args[0] == MESSAGE_ID_ERROR:
             return MessageFactory.build(args[0], game_id=args[1], error_text=args[2])
         elif args[0] == MESSAGE_ID_ANSWER:
-            return MessageFactory.build(args[0], game_id=args[1], game_result=args[2], game_hint=args[3], game_score=args[4])
+            return MessageFactory.build(args[0], game_id=args[1], game_result=args[2], game_score=args[3], game_hint=args[4])
         elif args[0] == MESSAGE_ID_GET_HINT:
             return MessageFactory.build(args[0], game_id=args[1])
         elif args[0] == MESSAGE_ID_ACK:
@@ -61,6 +61,8 @@ class MessageFactory:
             return MessageFactory.build(args[0], game_id=args[1])
         elif args[0] == MESSAGE_ID_GUESS:
             return MessageFactory.build(args[0], game_id=args[1], game_guess=args[2])
+        elif args[0] == MESSAGE_ID_HINT:
+            return MessageFactory.build(args[0], game_id=args[1], game_hint=args[2])
         print("Error: No message handling")
 
     @staticmethod

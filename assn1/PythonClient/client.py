@@ -4,7 +4,7 @@ from threading import Thread
 
 from PythonClient.constants import DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_A_NUMBER, DEFAULT_ALIAS, \
     DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, MESSAGE_ID_NEW_GAME, MESSAGE_ID_GUESS, MESSAGE_ID_GET_HINT, \
-    MESSAGE_ID_EXIT, MESSAGE_ID_ACK
+    MESSAGE_ID_EXIT
 from PythonClient.messages.message_factory import MessageFactory
 from PythonClient.receiver import Receiver
 from PythonClient.sender import Sender
@@ -24,7 +24,6 @@ class Client(Thread):
             'user': self.updateUser,
             'server': self.updateServer,
             'new game': self.newGame,
-            'guess': self.guess,
             'get hint': self.getHint
         }
 
@@ -65,8 +64,11 @@ class Client(Thread):
             try:
                 self.COMMAND_MAP[data]()
             except KeyError:
-                print("Error: Invalid Command")
-                self.help()
+                if "guess" in data and "guess" != data:
+                    self.guess(data.split()[1])
+                else:
+                    print("Error: Invalid Command")
+                    self.help()
 
     def help(self):
         """Display a help menu for the client"""
@@ -77,7 +79,7 @@ class Client(Thread):
         print("user - input new information about the user, such as first/last name, A#, or alias")
         print("server - input new information about the server, such as host and port")
         print("new game - initiate a new game with the server")
-        print("guess - submit a word as a guess to the server")
+        print("guess [WORD] - submit a word as a guess to the server")
         print("get hint - get a hint about a letter")
 
     def info(self):
@@ -121,9 +123,9 @@ class Client(Thread):
                                        user_alias=self.user['alias'])
         self.sendMessage(message)
 
-    def guess(self):
+    def guess(self, game_guess):
         if self.game['id'] is None: return
-        message = MessageFactory.build(MESSAGE_ID_GUESS, user_id=self.game['id'], game_guess=self.game['guess'])
+        message = MessageFactory.build(MESSAGE_ID_GUESS, game_id=self.game['id'], game_guess=game_guess)
         self.sendMessage(message)
 
     def getHint(self):
