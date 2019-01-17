@@ -67,8 +67,9 @@ class Client(Thread):
                 if "guess" in data and "guess" != data:
                     self.guess(data.split()[1])
                 else:
-                    print("Error: Invalid Command")
-                    self.help()
+                    if self.alive:
+                        print("Error: Invalid Command")
+                        self.help()
 
     def help(self):
         """Display a help menu for the client"""
@@ -137,6 +138,7 @@ class Client(Thread):
         if self.game['id'] is None: return
         message = MessageFactory.build(MESSAGE_ID_EXIT, game_id=self.game['id'])
         self.sendMessage(message)
+        print("Exiting Game. Press enter to end program.")
 
     def sendMessage(self, message):
         """Send a message to the server"""
