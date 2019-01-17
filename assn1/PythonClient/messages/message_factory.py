@@ -1,3 +1,5 @@
+import logging
+
 from PythonClient.constants import MESSAGE_ID_NEW_GAME, MESSAGE_ID_GAME_DEF, MESSAGE_ID_GUESS, MESSAGE_ID_ANSWER, \
     MESSAGE_ID_GET_HINT, MESSAGE_ID_EXIT, MESSAGE_ID_ACK, MESSAGE_ID_ERROR, MESSAGE_ID_HEARTBEAT, MESSAGE_ID_HINT
 from PythonClient.messages.ack_message import AckMessage
@@ -41,12 +43,14 @@ class MessageFactory:
 
     @staticmethod
     def build(*args, **kwargs):
+        logging.debug("Message Factory building message with id: {}".format(args[0]))
         message = MessageFactory.MESSAGE_TYPES[args[0]](*args, **kwargs)
         return message
 
     @staticmethod
     def buildFromBytes(bytestring):
         """Build a message from a byte string"""
+        logging.info("Message Factory building message from bytes: {}".format(bytestring))
         args = MessageFactory._decodeBytes(bytestring)
         if args[0] == MESSAGE_ID_HEARTBEAT:
             return MessageFactory.build(args[0], game_id=args[1])
@@ -68,6 +72,7 @@ class MessageFactory:
             return MessageFactory.build(args[0], game_id=args[1], game_hint=args[2])
         else:
             print("Error: No message handling")
+            logging.error("Message Factory no message handling for message with id: {}".format(args[0]))
 
     @staticmethod
     def _decodeBytes(bytestring):

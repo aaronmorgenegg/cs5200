@@ -20,3 +20,6 @@ MESSAGE_ID_ERROR     = 9
 MESSAGE_ID_HEARTBEAT = 10
 
 SLEEP_TIME = .05 # in seconds, sleep time after checking empty queues for workers/senders/receivers
+
+LOG_LEVEL = 10 # [10,20,30,40,50] [debug, info, warning, error, critical]
+LOG_FILE = "PythonClient.log"

@@ -1,3 +1,4 @@
+import logging
 import time
 from queue import Empty
 from threading import Thread
@@ -24,6 +25,7 @@ class Worker(Thread):
         while self.client.alive:
             try:
                 task = self.client.work_queue.get(block=False)
+                logging.info("Worker processing task with id: {}".format(task.id))
                 self._completeTask(task)
             except Empty:
                 time.sleep(SLEEP_TIME)

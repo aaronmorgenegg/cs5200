@@ -1,10 +1,11 @@
+import logging
 import socket
 from queue import Queue
 from threading import Thread
 
 from PythonClient.constants import DEFAULT_FIRST_NAME, DEFAULT_LAST_NAME, DEFAULT_A_NUMBER, DEFAULT_ALIAS, \
     DEFAULT_SERVER_HOST, DEFAULT_SERVER_PORT, MESSAGE_ID_NEW_GAME, MESSAGE_ID_GUESS, MESSAGE_ID_GET_HINT, \
-    MESSAGE_ID_EXIT
+    MESSAGE_ID_EXIT, LOG_LEVEL, LOG_FILE
 from PythonClient.messages.message_factory import MessageFactory
 from PythonClient.receiver import Receiver
 from PythonClient.sender import Sender
@@ -14,6 +15,8 @@ from PythonClient.worker import Worker
 class Client(Thread):
     def __init__(self, group=None, target=None, name=None, *args, **kwargs):
         super().__init__(group, target, name, args, kwargs)
+        self._initLogging()
+        logging.debug("Client Initializing")
 
         self.alive = True
 
@@ -58,9 +61,15 @@ class Client(Thread):
 
         self.help()
 
+        logging.debug("Client done initializing")
+
+    def _initLogging(self):
+        logging.basicConfig(format="%(levelname)s:%(asctime)s - %(message)s", filename=LOG_FILE, level=LOG_LEVEL)
+
     def run(self):
         while self.alive:
             data = input("Enter Command: ").lower()
+            logging.info("Client received command {}".format(data))
             try:
                 self.COMMAND_MAP[data]()
             except KeyError:
@@ -69,10 +78,12 @@ class Client(Thread):
                 else:
                     if self.alive:
                         print("Error: Invalid Command")
+                        logging.info("Client invalid command {}".format(data))
                         self.help()
 
     def help(self):
         """Display a help menu for the client"""
+        logging.debug("Client displaying help menu")
         print("-----COMMANDS-----")
         print("help - display this help menu")
         print("exit - end the program")
@@ -84,6 +95,7 @@ class Client(Thread):
         print("get hint - get a hint about a letter")
 
     def info(self):
+        logging.debug("Client displaying info menu")
         print("-"*30)
         print("User Information")
         print("First Name  : {}".format(self.user['first_name']))
@@ -101,6 +113,7 @@ class Client(Thread):
 
     def updateUser(self):
         """Update user information such as first/last name, A#, or alias"""
+        logging.info("Client updating user information")
         if self.game['id'] is not None:
             print("Error: Cannot modify user information while game is in progress")
             return
@@ -111,6 +124,7 @@ class Client(Thread):
 
     def updateServer(self):
         """Update server information such as host and port"""
+        logging.info("Client updating server information")
         if self.game['id'] is not None:
             print("Error: Cannot modify server information while game is in progress")
             return
@@ -135,19 +149,23 @@ class Client(Thread):
         self.sendMessage(message)
 
     def exit(self):
-        if self.game['id'] is None: return
+        logging.info("Client exiting")
+        if self.game['id'] is None: self.alive = False
         message = MessageFactory.build(MESSAGE_ID_EXIT, game_id=self.game['id'])
         self.sendMessage(message)
         print("Exiting Game. Press enter to end program.")
 
     def sendMessage(self, message):
         """Send a message to the server"""
+        logging.debug("Client enqueueing message for sending with id: {}".format(message.id))
         self.sender.enqueueMessage(message)
 
     def enqueueTask(self, task):
+        logging.debug("Client enqueueing task for processing with id: {}".format(task.id))
         self.work_queue.put(task)
 
     def reconnectSocket(self):
+        logging.info("Client connecting through socket to {}:{}".format(self.server['host'], self.server['port']))
         if self.socket is not None: self.socket.close()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.socket.connect((self.server['host'], self.server['port']))

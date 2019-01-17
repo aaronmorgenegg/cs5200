@@ -1,3 +1,4 @@
+import logging
 import time
 from queue import Queue, Empty
 from threading import Thread
@@ -21,7 +22,9 @@ class Sender(Thread):
                 time.sleep(SLEEP_TIME)
 
     def enqueueMessage(self, message):
+        logging.debug("Sender enqueueing message with id: {}".format(message.id))
         self.message_queue.put(message)
 
     def _sendMessage(self, message):
+        logging.info("Sender sending bytes: {}".format(message.encode()))
         self.socket.send(message.encode())

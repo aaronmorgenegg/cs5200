@@ -1,3 +1,4 @@
+import logging
 import socket
 import time
 from threading import Thread
@@ -17,6 +18,7 @@ class Receiver(Thread):
             try:
                 buf = self.socket.recv(1024)
                 if len(buf) > 0:
+                    logging.info("Receiver received bytes: {}".format(buf))
                     response = self._decodeBuffer(buf)
                     if response is not None:
                         self.client.enqueueTask(response)
@@ -34,6 +36,8 @@ class Receiver(Thread):
         return message
 
     def _ackHeartbeat(self):
+        logging.info("Receiver responding to heartbeat.")
         if self.client.game['id'] is None: return
         message = MessageFactory.build(MESSAGE_ID_ACK, game_id=self.client.game['id'])
+        logging.info("Receiver sending bytes: {}".format(message.encode()))
         self.socket.send(message.encode())
