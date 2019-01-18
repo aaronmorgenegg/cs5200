@@ -1,8 +1,10 @@
 import unittest
 
-from PythonClient.constants import MESSAGE_ID_ACK, MESSAGE_ID_NEW_GAME, MESSAGE_ID_ERROR, MESSAGE_ID_GUESS
+from PythonClient.constants import MESSAGE_ID_ACK, MESSAGE_ID_NEW_GAME, MESSAGE_ID_ERROR, MESSAGE_ID_GUESS, \
+    MESSAGE_ID_GAME_DEF
 from PythonClient.messages.ack_message import AckMessage
 from PythonClient.messages.error_message import ErrorMessage
+from PythonClient.messages.game_def_message import GameDefMessage
 from PythonClient.messages.message_factory import MessageFactory
 from PythonClient.messages.new_game_message import NewGameMessage
 
@@ -49,3 +51,19 @@ class TestMessageFactory(unittest.TestCase):
         # Test Game Guess with missing arguments
         message_id = MESSAGE_ID_GUESS
         self.assertRaises(KeyError, MessageFactory.build, message_id)
+
+    def testBuildFromBytesValidMessage(self):
+        """Test MessageFactory.buildFromBytes() with valid parameters"""
+        # Test Game Def with valid bytestring
+        bytestring = b'\x00\x02\x00\x05\x00\x0c\x00_\x00_\x00_\x00_\x00_\x00_\x00"\x00A\x00 \x00T\x00e\x00s\x00t\x00 \x00D\x00e\x00f\x00i\x00n\x00i\x00t\x00i\x00o\x00n'
+
+        message_id = MESSAGE_ID_GAME_DEF
+        game_id = 5
+        game_hint = "______"
+        game_definition = "A Test Definition"
+        expected = GameDefMessage(message_id, game_id=game_id, game_hint=game_hint, game_definition=game_definition)
+        actual = MessageFactory.buildFromBytes(bytestring)
+        self.assertEqual(expected.id, actual.id)
+        self.assertEqual(expected.game_id, actual.game_id)
+        self.assertEqual(expected.game_hint, actual.game_hint)
+        self.assertEqual(expected.game_definition, actual.game_definition)
