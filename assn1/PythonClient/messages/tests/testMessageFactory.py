@@ -52,6 +52,12 @@ class TestMessageFactory(unittest.TestCase):
         message_id = MESSAGE_ID_GUESS
         self.assertRaises(KeyError, MessageFactory.build, message_id)
 
+        # Test Game Guess with wrong arguments
+        message_id = MESSAGE_ID_GUESS
+        game_id=5
+        game_hint="test"
+        self.assertRaises(KeyError, MessageFactory.build, message_id, game_id=game_id, game_hint=game_hint)
+
     def testBuildFromBytesValidMessage(self):
         """Test MessageFactory.buildFromBytes() with valid parameters"""
         # Test Game Def with valid bytestring

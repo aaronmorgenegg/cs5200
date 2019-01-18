@@ -37,7 +37,7 @@ class Client(Thread):
             'user': self.updateUser,
             'server': self.updateServer,
             'new game': self.newGame,
-            'get hint': self.getHint
+            'hint': self.getHint
         }
 
         self.user = {
@@ -103,7 +103,7 @@ class Client(Thread):
         print("server - input new information about the server, such as host and port")
         print("new game - initiate a new game with the server")
         print("guess [WORD] - submit a word as a guess to the server")
-        print("get hint - get a hint about a letter")
+        print("hint - get a hint about a letter")
 
     def info(self):
         logging.debug("Client displaying info menu")
